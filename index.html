@@ -1,0 +1,94 @@
+
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FamilyPoints</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <h1>FamilyPoints</h1>
+    <nav class="tabs">
+      <button data-tab="home" class="active">Home</button>
+      <button data-tab="tasks">Aufgaben</button>
+      <button data-tab="rewards">Belohnungen</button>
+      <button data-tab="history">Verlauf</button>
+      <button data-tab="admin">Admin</button>
+    </nav>
+  </header>
+
+  <main>
+    <section id="home" class="tab-content visible">
+      <h2>Deine Punkte</h2>
+      <div id="pointsDisplay" class="points">0</div>
+      <p class="muted">Sammle Punkte für gute Taten und tausche sie gegen Belohnungen ein!</p>
+    </section>
+
+    <section id="tasks" class="tab-content">
+      <h2>Aufgaben</h2>
+      <ul id="tasksList" class="list"></ul>
+    </section>
+
+    <section id="rewards" class="tab-content">
+      <h2>Belohnungen</h2>
+      <ul id="rewardsList" class="list"></ul>
+    </section>
+
+    <section id="history" class="tab-content">
+      <h2>Verlauf</h2>
+      <ul id="historyList" class="history"></ul>
+    </section>
+
+    <section id="admin" class="tab-content">
+      <h2>Admin-Bereich</h2>
+      <div id="adminLock">
+        <label for="pinInput">PIN:</label>
+        <input id="pinInput" type="password" inputmode="numeric" placeholder="****" />
+        <button id="unlockBtn">Entsperren</button>
+        <p class="muted">Standard-PIN: 1234 (bitte ändern)</p>
+      </div>
+
+      <div id="adminPanel" class="hidden">
+        <div class="row">
+          <div>
+            <h3>Punkte</h3>
+            <div class="row">
+              <button class="btn" data-add="5">+5</button>
+              <button class="btn" data-add="10">+10</button>
+              <button class="btn danger" data-add="-10">-10</button>
+            </div>
+          </div>
+        </div>
+
+        <h3>Aufgaben verwalten</h3>
+        <div class="row">
+          <input id="taskTitle" type="text" placeholder="Titel" />
+          <input id="taskPoints" type="number" placeholder="Punkte" />
+          <button id="addTaskBtn" class="btn">Hinzufügen</button>
+        </div>
+        <ul id="adminTasks" class="list"></ul>
+
+        <h3>Belohnungen verwalten</h3>
+        <div class="row">
+          <input id="rewardTitle" type="text" placeholder="Titel" />
+          <input id="rewardCost" type="number" placeholder="Kosten" />
+          <button id="addRewardBtn" class="btn">Hinzufügen</button>
+        </div>
+        <ul id="adminRewards" class="list"></ul>
+
+        <h3>PIN ändern</h3>
+        <div class="row">
+          <input id="newPin" type="password" placeholder="Neuer PIN" />
+          <button id="savePinBtn" class="btn">Speichern</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer muted">Offline · lokal gespeichert</footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
