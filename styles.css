@@ -1,5 +1,6 @@
 
 :root{ --green:#2e7d32; --blue:#1e88e5; --gold:#f9a825; --bg:#fafafa; --surface:#ffffff; --muted:#666; --text:#222; }
+.hidden{ display: none; }
 body.dark{ --bg:#121212; --surface:#1e1e1e; --muted:#999; --text:#eee; --green:#4caf50; --blue:#64b5f6; --gold:#ffca28; }
 *{ box-sizing:border-box; }
 body{ margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; background:var(--bg); color:var(--text); }
@@ -29,7 +30,6 @@ main{ padding:16px; }
 .btn.danger{ background:#c62828; }
 .btn.disabled{ background:#ddd; color:#999; cursor:not-allowed; }
 .row{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin:8px 0; }
-.hidden{ display:none; }
 .history{ list-style:none; padding:0; display:flex; flex-direction:column; gap:8px; }
 .delta.plus{ color:var(--green); font-weight:700; }
 .delta.minus{ color:#c62828; font-weight:700; }

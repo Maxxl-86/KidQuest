@@ -1,21 +1,18 @@
-# KidQuest v5 (Erfolge & Virtuelles Haustier)
+# KidQuest v5.2 (Stabilitäts-Fix)
 
-**Neu in v5:**
-- **Erfolge & Trophäen**: „Erster Streak“, „1000 Punkte insgesamt“, „10 Belohnungen eingelöst“ – eigener Bereich mit Icons & kleiner Animation.
-- **Virtuelles Haustier/Pflanze**: wächst mit deinen Punkten; bei Streak-Verlust **verwelkt** (temporär) → motiviert dranzubleiben.
-- Voll kompatibel mit v4: Branding, Dark Mode, Intro, Profile, Freigabe-Flow, Limits, Badges & Streak-Bonus.
+**Neu / Fixes:**
+- Zuverlässiges **Intro schließen** ("Verstanden") mit `.hidden`-Klasse und Event-Bindings nach DOM-Load.
+- **Profil +** im Header erstellt sofort ein neues Profil (Prompt) und wechselt dorthin.
+- Service Worker Cache-Bump (`kidquest-v5.2`) → alte Dateien werden nicht mehr aus dem Cache geladen.
+- Volle v5-Funktionalität bleibt: Freigabe-Flow, Limits (Tag/Woche), Badges, Erfolge, virtuelles Haustier, Dark Mode, Profile.
 
 ## Nutzung
 1. ZIP entpacken.
-2. `index.html` doppelklicken (lokal ohne Service Worker).
-3. Für GitHub Pages: alle Dateien hochladen (auch `manifest.json`, `sw.js`, `assets/`).
+2. Im Repo **alle Dateien ersetzen**: `index.html`, `styles.css`, `app.js`, `manifest.json`, `sw.js`, `assets/`.
+3. **Hard Reload** im Browser (Strg+Shift+R / Cmd+Shift+R), damit der neue Cache gilt.
 
-## Dateien
-- `index.html`, `styles.css`, `app.js`, `manifest.json`, `sw.js`, `assets/`
-
-## Anpassung
-- Erfolge in `app.js` (Liste `ACHIEVEMENTS`).
-- Haustier-Logik in `app.js` (`computePetStage`, `updateStreakOnAction`).
+## Hinweis
+- Falls weiterhin veraltete Dateien geladen werden: Browser-Cache und App-Daten für die GitHub-Pages-URL leeren.
 
 ## Lizenz
 MIT
