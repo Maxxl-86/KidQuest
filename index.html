@@ -4,11 +4,23 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>KidQuest</title>
+  <meta name="theme-color" content="#2e7d32" />
+  <link rel="icon" href="assets/favicon.ico">
+  <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header class="app-header">
-    <h1>KidQuest</h1>
+  <header class="app-header brand">
+    <div class="brand-left">
+      <img src="assets/logo.svg" alt="KidQuest" class="logo"/>
+      <span class="tagline">Punkte. Motivation. Spaß.</span>
+    </div>
+    <div class="brand-right">
+      <label class="muted" for="profileSelect">Profil:</label>
+      <select id="profileSelect"></select>
+      <button id="addProfileBtn" class="btn secondary">Profil +</button>
+      <button id="themeToggle" class="btn">Dark</button>
+    </div>
     <nav class="tabs">
       <button data-tab="home" class="active">Home</button>
       <button data-tab="tasks">Aufgaben</button>
@@ -102,6 +114,15 @@
         <h3>Freigaben</h3>
         <ul id="adminPending" class="list"></ul>
 
+        <h3>Profile verwalten</h3>
+        <div class="row">
+          <input id="newProfileName" type="text" placeholder="Neuer Profilname" />
+          <button id="createProfileBtn" class="btn">Profil erstellen</button>
+          <input id="renameProfileName" type="text" placeholder="Profil umbenennen" />
+          <button id="renameProfileBtn" class="btn">Umbenennen</button>
+          <button id="deleteProfileBtn" class="btn danger">Profil löschen</button>
+        </div>
+
         <h3>PIN ändern</h3>
         <div class="row">
           <input id="newPin" type="password" placeholder="Neuer PIN" />
@@ -112,8 +133,23 @@
   </main>
 
   <div id="toast" class="toast hidden"></div>
+
+  <div id="intro" class="intro hidden">
+    <div class="intro-card">
+      <img src="assets/logo.svg" class="intro-logo" alt="KidQuest" />
+      <h2>Willkommen bei KidQuest!</h2>
+      <p>Markiere Aufgaben → Eltern bestätigen im Admin. Sammle Punkte, hol dir Belohnungen und halte deinen Streak!</p>
+      <button id="introOkBtn" class="btn">Verstanden</button>
+    </div>
+  </div>
+
   <footer class="app-footer muted">KidQuest · Offline · lokal gespeichert</footer>
 
+  <script>
+    if('serviceWorker' in navigator){
+      window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(()=>{}); });
+    }
+  </script>
   <script src="app.js"></script>
 </body>
 </html>

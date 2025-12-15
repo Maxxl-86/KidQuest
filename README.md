@@ -1,25 +1,25 @@
+# KidQuest v4 (Branding, Dark Mode, Intro & Profile)
 
-# KidQuest v2 (Offline Web-App, mit Limits & Freigaben)
-
-**Neu in v2:**
-- Eltern-Freigabe (**Gemacht → wartet auf Bestätigung**)
-- **Tages-/Wochenlimits** für Punkte
-- **Pro-Aufgabe Tageslimit** (z. B. Zähne putzen max. 2×/Tag)
-- **Feedback/Toast** nach Aktionen
-- **Badges** (100 Punkte, 10 bestätigte Aufgaben, 7-Tage-Streak)
-- **Streak-Bonus**: alle 7 Tage +10 Punkte (einmal pro erreichtem Multipel)
+**Neu in v4:**
+- Dark Mode Toggle (speichert Einstellung)
+- Intro/Willkommens-Overlay (pro Profil, einmalig)
+- Aufgaben-Icons (Emoji-Mapping) für kindgerechte Optik
+- Mehrere Kinder-Profile (optional), Profile verwalten im Admin
+- PWA-Branding & Icons bleiben erhalten
+- Alle v2/v3 Features weiter aktiv: Freigabe-Flow, Limits, Badges & Streak-Bonus
 
 ## Nutzung
 1. ZIP entpacken.
-2. `index.html` doppelklicken → läuft sofort im Browser.
-3. Admin-PIN: `1234` (bitte ändern).
-
-## Admin → Limits
-- "Max Punkte pro Tag" und "pro Woche" einstellbar.
-- Tages-/Wochenzähler werden automatisch geführt.
+2. `index.html` doppelklicken → lokal testen.
+3. Für GitHub Pages: alle Dateien hochladen (inkl. `manifest.json`, `sw.js`, `assets/`).
 
 ## Dateien
-- `index.html` · `styles.css` · `app.js`
+- `index.html`, `styles.css`, `app.js`, `manifest.json`, `sw.js`, `assets/*`
+
+## Anpassung
+- Farben in `styles.css` (`:root` und `.dark`).
+- Aufgaben-Icons in `app.js` (`iconForTaskTitle`).
+- Profile im Admin anlegen/umbenennen/löschen.
 
 ## Lizenz
 MIT
