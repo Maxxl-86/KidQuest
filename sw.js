@@ -1,5 +1,5 @@
-// Cache-first service worker for KidQuest v4
-const CACHE = 'kidquest-v4';
+// Cache-first service worker for KidQuest v5
+const CACHE = 'kidquest-v5';
 const ASSETS = [
   './', './index.html', './styles.css', './app.js', './manifest.json',
   './assets/logo.svg', './assets/favicon.ico', './assets/icon-192.png', './assets/icon-512.png'

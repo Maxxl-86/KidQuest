@@ -26,6 +26,7 @@
       <button data-tab="tasks">Aufgaben</button>
       <button data-tab="rewards">Belohnungen</button>
       <button data-tab="badges">Badges</button>
+      <button data-tab="achievements">Erfolge</button>
       <button data-tab="history">Verlauf</button>
       <button data-tab="admin">Admin</button>
     </nav>
@@ -40,7 +41,10 @@
         <div>Heute: <span id="todayPoints">0</span>/<span id="maxDay">0</span> Punkte</div>
         <div>Diese Woche: <span id="weekPoints">0</span>/<span id="maxWeek">0</span> Punkte</div>
       </div>
-      <p class="muted">Markiere Aufgaben, Eltern bestätigen im Admin-Tab. So bleibt es fair.</p>
+      <div class="pet">
+        <div class="pet-emoji" id="petEmoji">🌱</div>
+        <div class="pet-status" id="petStatus">Deine Pflanze wächst mit dir!</div>
+      </div>
     </section>
 
     <section id="tasks" class="tab-content">
@@ -58,6 +62,11 @@
     <section id="badges" class="tab-content">
       <h2>Badges</h2>
       <ul id="badgesList" class="badges"></ul>
+    </section>
+
+    <section id="achievements" class="tab-content">
+      <h2>Erfolge & Trophäen</h2>
+      <ul id="achievementsList" class="achievements"></ul>
     </section>
 
     <section id="history" class="tab-content">
@@ -133,7 +142,6 @@
   </main>
 
   <div id="toast" class="toast hidden"></div>
-
   <div id="intro" class="intro hidden">
     <div class="intro-card">
       <img src="assets/logo.svg" class="intro-logo" alt="KidQuest" />
