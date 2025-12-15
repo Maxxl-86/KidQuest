@@ -1,5 +1,5 @@
-// Cache-first service worker for KidQuest v5.2 (cache bump)
-const CACHE = 'kidquest-v5.2';
+// Cache-first service worker for KidQuest v5.3 (cache bump)
+const CACHE = 'kidquest-v5.3';
 const ASSETS = [
   './', './index.html', './styles.css', './app.js', './manifest.json',
   './assets/logo.svg', './assets/favicon.ico', './assets/icon-192.png', './assets/icon-512.png'

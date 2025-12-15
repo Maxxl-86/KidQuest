@@ -1,5 +1,5 @@
 
-// KidQuest v5.2 – volle Funktionalität + Stabilitäts-Fixes
+// KidQuest v5.3 – stabile Intro-Logik, Konfetti, Profil-UX, Admin-Freigaben mit data-id
 (function(){
   const APPKEY = 'kidquest_app_v5';
   const THEMEKEY = 'kidquest_theme';
@@ -79,7 +79,12 @@
 
   function checkBadges(){ const p = profile(); if(!p.badges.points100 && p.points >= 100) p.badges.points100 = true; const confirmedTasks = p.history.filter(h => h.type==='task' && h.title !== 'Streak-Bonus').length; if(!p.badges.tasks10 && confirmedTasks >= 10) p.badges.tasks10 = true; if(!p.badges.streak7 && p.streak.count >= 7) p.badges.streak7 = true; }
 
-  function checkAchievements(){ const p = profile(); let unlocked = false; ACHIEVEMENTS.forEach(a => { if(!p.achievements[a.key] && a.check(p)){ p.achievements[a.key] = true; unlocked = true; p.history.unshift({ id:Date.now()+'', type:'achievement', title:a.name, delta:0, date:nowIso() }); } }); if(unlocked) showToast('Neuer Erfolg freigeschaltet!'); }
+  // --- Konfetti ---
+  function fireConfetti(){ const cont = $('#confetti'); if(!cont) return; cont.innerHTML=''; cont.classList.remove('hidden'); const colors = ['#f44336','#e91e63','#9c27b0','#3f51b5','#2196f3','#03a9f4','#00bcd4','#009688','#4caf50','#ff9800','#ffc107','#ffeb3b']; const N = 100; const w = window.innerWidth; for(let i=0;i<N;i++){ const d = document.createElement('div'); d.className='p'; d.style.left = Math.random()*w + 'px'; d.style.background = colors[(Math.random()*colors.length)|0]; d.style.animationDelay = (Math.random()*0.25)+'s'; d.style.transform = 'translateY(-20px) rotate('+((Math.random()*360)|0)+'deg)'; cont.appendChild(d); }
+    setTimeout(()=>cont.classList.add('hidden'), 1500);
+  }
+
+  function checkAchievements(){ const p = profile(); let unlocked = false; ACHIEVEMENTS.forEach(a => { if(!p.achievements[a.key] && a.check(p)){ p.achievements[a.key] = true; unlocked = true; p.history.unshift({ id:Date.now()+'', type:'achievement', title:a.name, delta:0, date:nowIso() }); } }); if(unlocked){ showToast('Neuer Erfolg freigeschaltet!'); fireConfetti(); } }
 
   function iconForTaskTitle(title){ const map = { 'Hausaufgaben erledigt':'🏫','Zimmer aufräumen':'🧹','Müll rausbringen':'🗑️','Zähne putzen (morgens/abends)':'🦷','Freundlich & respektvoll':'🙂','Pünktlich ins Bett':'🛏️','Schultasche packen':'🎒','Esstisch decken':'🍽️','Esstisch abräumen':'🧼', }; return map[title] || '⭐'; }
 
@@ -94,12 +99,15 @@
     const achUl = $('#achievementsList'); if(achUl){ achUl.innerHTML=''; ACHIEVEMENTS.forEach(a => { const unlocked = !!p.achievements[a.key]; const li = document.createElement('li'); li.className = 'achievement'+(unlocked?' unlocked':' locked'); li.innerHTML = `<div class="icon">${a.icon}</div><div><div class="name">${a.name}</div><div class="sub">${a.desc}</div></div>`; achUl.appendChild(li); }); }
     const histUl = $('#historyList'); if(histUl){ histUl.innerHTML=''; p.history.forEach(h => { const li = document.createElement('li'); li.className='card'; const deltaClass = h.delta > 0 ? 'plus' : (h.delta < 0 ? 'minus' : ''); li.innerHTML = `<div><div class="title">${h.type === 'task' ? 'Aufgabe' : h.type === 'reward' ? 'Belohnung' : 'Erfolg'}: ${h.title}</div><div class="sub">${new Date(h.date).toLocaleString()}</div></div><div class="delta ${deltaClass}">${h.delta>0?'+':''}${h.delta||''}</div>`; histUl.appendChild(li); }); }
     if($('#adminTodayPoints')) $('#adminTodayPoints').textContent = p.counters.dailyPoints; if($('#adminWeekPoints')) $('#adminWeekPoints').textContent = p.counters.weeklyPoints; if($('#adminMaxDay')) $('#adminMaxDay').textContent = p.limits.maxPointsPerDay; if($('#adminMaxWeek')) $('#adminMaxWeek').textContent = p.limits.maxPointsPerWeek;
+
+    // Admin Pending (mit data-id)
+    const adminPend = $('#adminPending'); if(adminPend){ adminPend.innerHTML=''; p.pending.forEach(item => { const li = document.createElement('li'); li.className='card'; li.innerHTML = `<div class="title">${item.title}</div><div class="sub">+${item.points} · markiert ${new Date(item.date).toLocaleString()}</div>`; const approve = document.createElement('button'); approve.className='btn'; approve.textContent='Bestätigen'; approve.dataset.pid = item.id; const reject = document.createElement('button'); reject.className='btn danger'; reject.textContent='Ablehnen'; reject.dataset.pid = item.id; li.append(approve, reject); adminPend.appendChild(li); }); }
   }
 
   // Actions
   function markTask(taskId){ ensurePeriodCounters(); const p = profile(); const t = state.tasks.find(x=>x.id===taskId); if(!t) return; const approvedToday = p.counters.dailyTaskCounts[taskId] || 0; const pendingToday = p.pending.filter(x => x.taskId === taskId && dayKeyOf(x.date) === todayKey()).length; const totalToday = approvedToday + pendingToday; if(totalToday >= (t.limitPerDay||1)) return showToast('Tageslimit erreicht'); p.pending.unshift({ id:'p'+Date.now(), taskId, title:t.title, points:t.points, date:nowIso() }); save(); render(); showToast('Zur Freigabe markiert'); }
-  function approveTask(pendingId){ ensurePeriodCounters(); const p = profile(); const idx = p.pending.findIndex(x=>x.id===pendingId); if(idx<0) return; const item = p.pending[idx]; const t = state.tasks.find(x=>x.id===item.taskId); const approvedToday = p.counters.dailyTaskCounts[item.taskId] || 0; if(approvedToday >= (t.limitPerDay||1)) return showToast('Tageslimit für Aufgabe erreicht'); const wouldDaily = p.counters.dailyPoints + item.points; if(wouldDaily > p.limits.maxPointsPerDay) return showToast('Tageslimit Punkte erreicht'); const wouldWeekly = p.counters.weeklyPoints + item.points; if(wouldWeekly > p.limits.maxPointsPerWeek) return showToast('Wochenlimit Punkte erreicht'); p.pending.splice(idx,1); p.points += item.points; p.counters.dailyPoints += item.points; p.counters.weeklyPoints += item.points; p.counters.dailyTaskCounts[item.taskId] = (p.counters.dailyTaskCounts[item.taskId]||0) + 1; p.stats.totalEarned += item.points; p.history.unshift({ id:Date.now()+'', type:'task', title:item.title, delta:item.points, date:nowIso() }); updateStreakOnAction(); checkBadges(); checkAchievements(); save(); render(); showToast('Bestätigt: +'+item.points+' Punkte'); }
-  function rejectTask(pendingId){ const p = profile(); p.pending = p.pending.filter(x=>x.id!==pendingId); save(); render(); showToast('Abgelehnt'); }
+  function approveTaskById(pid){ ensurePeriodCounters(); const p = profile(); const idx = p.pending.findIndex(x=>x.id===pid); if(idx<0) return; const item = p.pending[idx]; const t = state.tasks.find(x=>x.id===item.taskId); const approvedToday = p.counters.dailyTaskCounts[item.taskId] || 0; if(approvedToday >= (t.limitPerDay||1)) return showToast('Tageslimit für Aufgabe erreicht'); const wouldDaily = p.counters.dailyPoints + item.points; if(wouldDaily > p.limits.maxPointsPerDay) return showToast('Tageslimit Punkte erreicht'); const wouldWeekly = p.counters.weeklyPoints + item.points; if(wouldWeekly > p.limits.maxPointsPerWeek) return showToast('Wochenlimit Punkte erreicht'); p.pending.splice(idx,1); p.points += item.points; p.counters.dailyPoints += item.points; p.counters.weeklyPoints += item.points; p.counters.dailyTaskCounts[item.taskId] = (p.counters.dailyTaskCounts[item.taskId]||0) + 1; p.stats.totalEarned += item.points; p.history.unshift({ id:Date.now()+'', type:'task', title:item.title, delta:item.points, date:nowIso() }); updateStreakOnAction(); checkBadges(); checkAchievements(); save(); render(); showToast('Bestätigt: +'+item.points+' Punkte'); }
+  function rejectTaskById(pid){ const p = profile(); p.pending = p.pending.filter(x=>x.id!==pid); save(); render(); showToast('Abgelehnt'); }
   function redeemReward(rewardId){ const p = profile(); const r = state.rewards.find(x=>x.id===rewardId); if(!r) return; if(p.points < r.cost) return showToast('Nicht genug Punkte'); p.points -= r.cost; p.stats.totalSpent += r.cost; p.stats.rewardsRedeemed += 1; p.history.unshift({ id:Date.now()+'', type:'reward', title:r.title, delta:-r.cost, date:nowIso() }); checkAchievements(); save(); render(); showToast('Belohnung eingelöst'); }
   function addTask(title, pts, limit){ state.tasks.unshift({ id:'t'+Date.now(), title, points:pts, limitPerDay: (limit||1) }); save(); render(); }
   function removeTask(id){ state.tasks = state.tasks.filter(t=>t.id!==id); save(); render(); }
@@ -111,7 +119,7 @@
   function renameCurrentProfile(name){ if(!name) return; state.profiles[state.currentProfileId].name = name; save(); render(); showToast('Profil umbenannt'); }
   function deleteCurrentProfile(){ const keys = Object.keys(state.profiles); if(keys.length<=1) return showToast('Mindestens 1 Profil benötigt'); delete state.profiles[state.currentProfileId]; state.currentProfileId = Object.keys(state.profiles)[0]; save(); render(); showToast('Profil gelöscht'); }
 
-  // Bind after DOM ready (fixes timing issues on some browsers)
+  // Delegation & Bindings after DOM Ready
   document.addEventListener('DOMContentLoaded', () => {
     // Tabs
     $$('.tabs button').forEach(btn => { btn.addEventListener('click', () => { $$('.tabs button').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); const tab = btn.getAttribute('data-tab'); $$('.tab-content').forEach(sec=>sec.classList.remove('visible')); const target = document.getElementById(tab); if(target) target.classList.add('visible'); }); });
@@ -128,16 +136,31 @@
     const savePinBtn = $('#savePinBtn'); if(savePinBtn){ savePinBtn.onclick = () => { const np = $('#newPin').value.trim(); if(!np) return showToast('PIN angeben'); state.adminPin = np; save(); showToast('PIN aktualisiert'); $('#newPin').value=''; }; }
     const saveLimitsBtn = $('#saveLimitsBtn'); if(saveLimitsBtn){ saveLimitsBtn.onclick = () => { const p = profile(); const d = parseInt($('#limitDay').value,10); const w = parseInt($('#limitWeek').value,10); if(!isNaN(d)) p.limits.maxPointsPerDay = Math.max(1,d); if(!isNaN(w)) p.limits.maxPointsPerWeek = Math.max(1,w); save(); render(); showToast('Limits gespeichert'); }; }
 
-    // Approvals list (admin)
-    const adminPending = $('#adminPending'); if(adminPending){ adminPending.addEventListener('click', (e) => { const t = e.target; if(t.tagName==='BUTTON'){ const li = t.closest('li'); const title = li && li.querySelector('.title') ? li.querySelector('.title').textContent : ''; const item = profile().pending.find(x=>x.title===title); if(!item) return; if(t.textContent==='Bestätigen') approveTask(item.id); else if(t.textContent==='Ablehnen') rejectTask(item.id); } }); }
+    // Admin Pending actions via data-id
+    const adminPend = $('#adminPending'); if(adminPend){ adminPend.addEventListener('click', (e) => { const t = e.target; if(t.tagName==='BUTTON'){ const pid = t.dataset.pid; if(!pid) return; if(t.textContent==='Bestätigen') approveTaskById(pid); else if(t.textContent==='Ablehnen') rejectTaskById(pid); } }); }
 
     // Header controls
     const themeToggle = $('#themeToggle'); if(themeToggle){ themeToggle.onclick = () => { state.theme = (state.theme==='dark' ? 'light' : 'dark'); document.body.classList.toggle('dark', state.theme==='dark'); localStorage.setItem(THEMEKEY, state.theme); }; }
     const addProfileBtn = $('#addProfileBtn'); if(addProfileBtn){ addProfileBtn.onclick = () => { const name = prompt('Neuer Profilname?', 'Profil'); if(name===null) return; addProfile(name.trim()); }; }
     const profileSelect = $('#profileSelect'); if(profileSelect){ profileSelect.onchange = (e) => { state.currentProfileId = e.target.value; save(); render(); }; }
 
-    // Intro close
-    const introOkBtn = $('#introOkBtn'); if(introOkBtn){ introOkBtn.onclick = () => { const p = profile(); p.showIntro = false; save(); render(); }; }
+    // Intro schließen (Delegation + Fallback)
+    function closeIntro(){ const p = profile(); if(!p) return; p.showIntro = false; save(); render(); const introEl = $('#intro'); if(introEl) introEl.classList.add('hidden'); }
+    document.addEventListener('click', (e) => {
+      const t = e.target;
+      if(t && t.id === 'introOkBtn'){ e.preventDefault(); e.stopPropagation(); closeIntro(); return; }
+      const introCard = t && t.closest && t.closest('.intro-card');
+      if(introCard && t.tagName !== 'A' && t.tagName !== 'INPUT' && t.tagName !== 'BUTTON'){ closeIntro(); }
+      const introEl = $('#intro'); if(introEl && t === introEl){ closeIntro(); }
+    });
+
+    // Admin Profile actions
+    const createProfileBtn = $('#createProfileBtn'); if(createProfileBtn){ createProfileBtn.onclick = () => { const name = $('#newProfileName').value.trim(); addProfile(name || 'Profil'); $('#newProfileName').value=''; }; }
+    const renameProfileBtn = $('#renameProfileBtn'); if(renameProfileBtn){ renameProfileBtn.onclick = () => { const name = $('#renameProfileName').value.trim(); if(!name) return showToast('Name angeben'); renameCurrentProfile(name); $('#renameProfileName').value=''; }; }
+    const deleteProfileBtn = $('#deleteProfileBtn'); if(deleteProfileBtn){ deleteProfileBtn.onclick = () => { deleteCurrentProfile(); }; }
+
+    // Intro erneut anzeigen Checkbox
+    const reShowChk = $('#reShowIntroChk'); if(reShowChk){ reShowChk.onchange = () => { const p = profile(); p.showIntro = reShowChk.checked; save(); render(); }; reShowChk.checked = profile().showIntro; }
 
     // Initial render after bindings
     render();

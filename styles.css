@@ -1,6 +1,6 @@
 
 :root{ --green:#2e7d32; --blue:#1e88e5; --gold:#f9a825; --bg:#fafafa; --surface:#ffffff; --muted:#666; --text:#222; }
-.hidden{ display: none; }
+.hidden{ display: none !important; }
 body.dark{ --bg:#121212; --surface:#1e1e1e; --muted:#999; --text:#eee; --green:#4caf50; --blue:#64b5f6; --gold:#ffca28; }
 *{ box-sizing:border-box; }
 body{ margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; background:var(--bg); color:var(--text); }
@@ -53,3 +53,8 @@ input, select{ padding:10px 12px; border:1px solid #ddd; border-radius:10px; bac
 .intro{ position:fixed; inset:0; background:rgba(0,0,0,0.35); display:flex; align-items:center; justify-content:center; }
 .intro-card{ background:var(--surface); color:var(--text); padding:20px; border-radius:16px; width:clamp(280px, 80vw, 520px); text-align:center; border:1px solid #3333; }
 .intro-logo{ height:40px; margin-bottom:8px; }
+
+/* Konfetti */
+.confetti{ position:fixed; inset:0; pointer-events:none; overflow:hidden; }
+.confetti .p{ position:absolute; width:8px; height:14px; opacity:.9; border-radius:2px; animation: fall 1200ms linear forwards; }
+@keyframes fall{ 0%{ transform:translateY(-20px) rotate(0deg); } 100%{ transform:translateY(110vh) rotate(720deg); opacity:0; } }
