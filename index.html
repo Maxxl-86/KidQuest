@@ -1,19 +1,19 @@
-
 <!doctype html>
 <html lang="de">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>FamilyPoints</title>
+  <title>KidQuest</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <header class="app-header">
-    <h1>FamilyPoints</h1>
+    <h1>KidQuest</h1>
     <nav class="tabs">
       <button data-tab="home" class="active">Home</button>
       <button data-tab="tasks">Aufgaben</button>
       <button data-tab="rewards">Belohnungen</button>
+      <button data-tab="badges">Badges</button>
       <button data-tab="history">Verlauf</button>
       <button data-tab="admin">Admin</button>
     </nav>
@@ -23,17 +23,29 @@
     <section id="home" class="tab-content visible">
       <h2>Deine Punkte</h2>
       <div id="pointsDisplay" class="points">0</div>
-      <p class="muted">Sammle Punkte für gute Taten und tausche sie gegen Belohnungen ein!</p>
+      <div class="streak"><span>Streak:</span> <span id="streakCount">0</span> Tage</div>
+      <div class="limits">
+        <div>Heute: <span id="todayPoints">0</span>/<span id="maxDay">0</span> Punkte</div>
+        <div>Diese Woche: <span id="weekPoints">0</span>/<span id="maxWeek">0</span> Punkte</div>
+      </div>
+      <p class="muted">Markiere Aufgaben, Eltern bestätigen im Admin-Tab. So bleibt es fair.</p>
     </section>
 
     <section id="tasks" class="tab-content">
       <h2>Aufgaben</h2>
       <ul id="tasksList" class="list"></ul>
+      <h3>Zur Freigabe markiert</h3>
+      <ul id="pendingList" class="list"></ul>
     </section>
 
     <section id="rewards" class="tab-content">
       <h2>Belohnungen</h2>
       <ul id="rewardsList" class="list"></ul>
+    </section>
+
+    <section id="badges" class="tab-content">
+      <h2>Badges</h2>
+      <ul id="badgesList" class="badges"></ul>
     </section>
 
     <section id="history" class="tab-content">
@@ -62,10 +74,19 @@
           </div>
         </div>
 
+        <h3>Limits</h3>
+        <div class="row">
+          <input id="limitDay" type="number" placeholder="Max Punkte/Tag" />
+          <input id="limitWeek" type="number" placeholder="Max Punkte/Woche" />
+          <button id="saveLimitsBtn" class="btn">Speichern</button>
+        </div>
+        <p class="muted">Aktuell: Heute <span id="adminTodayPoints">0</span>/<span id="adminMaxDay">0</span>, Woche <span id="adminWeekPoints">0</span>/<span id="adminMaxWeek">0</span></p>
+
         <h3>Aufgaben verwalten</h3>
         <div class="row">
           <input id="taskTitle" type="text" placeholder="Titel" />
           <input id="taskPoints" type="number" placeholder="Punkte" />
+          <input id="taskLimit" type="number" placeholder="Max/Tag (Standard 1)" />
           <button id="addTaskBtn" class="btn">Hinzufügen</button>
         </div>
         <ul id="adminTasks" class="list"></ul>
@@ -78,6 +99,9 @@
         </div>
         <ul id="adminRewards" class="list"></ul>
 
+        <h3>Freigaben</h3>
+        <ul id="adminPending" class="list"></ul>
+
         <h3>PIN ändern</h3>
         <div class="row">
           <input id="newPin" type="password" placeholder="Neuer PIN" />
@@ -87,7 +111,8 @@
     </section>
   </main>
 
-  <footer class="app-footer muted">Offline · lokal gespeichert</footer>
+  <div id="toast" class="toast hidden"></div>
+  <footer class="app-footer muted">KidQuest · Offline · lokal gespeichert</footer>
 
   <script src="app.js"></script>
 </body>
